@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../../../core/database/daos/history_dao.dart';
 import '../../../core/database/daos/queue_dao.dart';
 import '../../../core/database/daos/settings_dao.dart';
 import '../../../core/models/song.dart';
@@ -15,8 +16,7 @@ class QueueState {
   final List<Song> songs;
   final int currentIndex;
 
-  Song? get currentSong =>
-      currentIndex >= 0 && currentIndex < songs.length
+  Song? get currentSong => currentIndex >= 0 && currentIndex < songs.length
       ? songs[currentIndex]
       : null;
 
@@ -32,8 +32,12 @@ class QueueState {
 }
 
 class QueueNotifier extends StateNotifier<QueueState> {
-  QueueNotifier(this._audioPlayer, this._queueDao, this._settingsDao)
-    : super(const QueueState()) {
+  QueueNotifier(
+    this._audioPlayer,
+    this._queueDao,
+    this._settingsDao,
+    this._historyDao,
+  ) : super(const QueueState()) {
     _completionSubscription = _audioPlayer.playerStateStream.listen((
       playerState,
     ) {
@@ -47,16 +51,13 @@ class QueueNotifier extends StateNotifier<QueueState> {
   final AudioPlayerService _audioPlayer;
   final QueueDao _queueDao;
   final SettingsDao _settingsDao;
+  final HistoryDao _historyDao;
   late final StreamSubscription<PlayerState> _completionSubscription;
 
-  /// Restaura la cola guardada la última vez que se cerró la app. Carga
-  /// la canción actual sin reproducirla automáticamente — el usuario
-  /// decide si le da play.
   Future<void> _restore() async {
-    final songs = await _queueDao
-        .watchQueue()
-        .first
-        .then((rows) => rows.map(Song.fromEntity).toList());
+    final songs = await _queueDao.watchQueue().first.then(
+      (rows) => rows.map(Song.fromEntity).toList(),
+    );
     if (songs.isEmpty) return;
 
     final settings = await _settingsDao.getSettings();
@@ -72,6 +73,7 @@ class QueueNotifier extends StateNotifier<QueueState> {
   Future<void> playFrom(List<Song> songs, int startIndex) async {
     state = QueueState(songs: songs, currentIndex: startIndex);
     await _audioPlayer.playSong(songs[startIndex]);
+    await _historyDao.logPlay(songs[startIndex].id);
     await _persistQueue();
   }
 
@@ -80,6 +82,7 @@ class QueueNotifier extends StateNotifier<QueueState> {
     final nextIndex = state.currentIndex + 1;
     state = state.copyWith(currentIndex: nextIndex);
     await _audioPlayer.playSong(state.songs[nextIndex]);
+    await _historyDao.logPlay(state.songs[nextIndex].id);
     await _persistCurrentIndex();
   }
 
@@ -88,6 +91,7 @@ class QueueNotifier extends StateNotifier<QueueState> {
     final prevIndex = state.currentIndex - 1;
     state = state.copyWith(currentIndex: prevIndex);
     await _audioPlayer.playSong(state.songs[prevIndex]);
+    await _historyDao.logPlay(state.songs[prevIndex].id);
     await _persistCurrentIndex();
   }
 
@@ -95,6 +99,7 @@ class QueueNotifier extends StateNotifier<QueueState> {
     if (index < 0 || index >= state.songs.length) return;
     state = state.copyWith(currentIndex: index);
     await _audioPlayer.playSong(state.songs[index]);
+    await _historyDao.logPlay(state.songs[index].id);
     await _persistCurrentIndex();
   }
 
@@ -119,5 +124,6 @@ final queueProvider = StateNotifierProvider<QueueNotifier, QueueState>((ref) {
     ref.watch(audioPlayerServiceProvider),
     ref.watch(queueDaoProvider),
     ref.watch(settingsDaoProvider),
+    ref.watch(historyDaoProvider),
   );
 });
