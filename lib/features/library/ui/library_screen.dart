@@ -14,6 +14,10 @@ import 'dart:io' show Platform;
 
 import 'package:permission_handler/permission_handler.dart';
 import '../../../shared/widgets/add_to_playlist_sheet.dart';
+import 'dart:async' show unawaited;
+
+import '../../../core/services/remote_metadata_service.dart';
+import '../../../core/providers/database_provider.dart';
 
 class LibraryScreen extends ConsumerWidget {
   const LibraryScreen({super.key});
@@ -85,7 +89,7 @@ class _FolderChip extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final folderPath = ref.watch(selectedFolderPathProvider);
+    final folderPath = ref.watch(selectedFolderPathProvider).valueOrNull;
     final isScanning = ref.watch(isScanningLibraryProvider);
 
     final label = folderPath == null
@@ -142,7 +146,7 @@ class _FolderChip extends ConsumerWidget {
       return;
     }
 
-    ref.read(selectedFolderPathProvider.notifier).state = path;
+    await ref.read(settingsDaoProvider).setMusicFolderPath(path);
     ref.read(isScanningLibraryProvider.notifier).state = true;
 
     try {
@@ -161,6 +165,10 @@ class _FolderChip extends ConsumerWidget {
           backgroundColor: AppColors.surface,
         ),
       );
+
+      // Completa metadatos faltantes en segundo plano — no bloquea el
+      // SnackBar ni el resto de la UI mientras corre.
+      unawaited(ref.read(remoteMetadataServiceProvider).syncIfPossible());
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

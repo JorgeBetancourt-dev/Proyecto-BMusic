@@ -18,9 +18,12 @@ final isScanningLibraryProvider = StateProvider<bool>((ref) => false);
 final librarySearchQueryProvider = StateProvider<String>((ref) => '');
 
 /// Carpeta de música elegida por el usuario.
-/// TODO: persistir esta ruta (tabla de configuración en drift) para no
-/// pedirla de nuevo en cada apertura de la app.
-final selectedFolderPathProvider = StateProvider<String?>((ref) => null);
+/// Carpeta de música elegida por el usuario. Persistida en drift para
+/// no pedirla de nuevo en cada apertura de la app.
+final selectedFolderPathProvider = StreamProvider<String?>((ref) {
+  final dao = ref.watch(settingsDaoProvider);
+  return dao.watchSettings().map((settings) => settings?.musicFolderPath);
+});
 
 /// Canciones filtradas según el texto de búsqueda (título, artista o
 /// álbum).

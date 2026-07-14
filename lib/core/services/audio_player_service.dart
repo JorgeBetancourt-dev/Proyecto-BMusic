@@ -18,7 +18,9 @@ class AudioPlayerService {
   /// Carga y reproduce [song]. El `MediaItem` es lo que
   /// just_audio_background muestra en la notificación y el lockscreen
   /// (título, artista, portada).
-  Future<void> playSong(Song song) async {
+  /// Carga [song] sin reproducirla. Se usa para restaurar la cola al
+  /// abrir la app, dejando la canción lista pero pausada.
+  Future<void> loadSong(Song song) async {
     await _player.setAudioSource(
       AudioSource.uri(
         Uri.file(song.filePath),
@@ -31,6 +33,10 @@ class AudioPlayerService {
         ),
       ),
     );
+  }
+
+  Future<void> playSong(Song song) async {
+    await loadSong(song);
     await _player.play();
   }
 

@@ -8,7 +8,9 @@ final databaseProvider = Provider<AppDatabase>((ref) {
   ref.onDispose(db.close);
   return db;
 });
-
+final settingsDaoProvider = Provider(
+  (ref) => ref.watch(databaseProvider).settingsDao,
+);
 final songsDaoProvider = Provider(
   (ref) => ref.watch(databaseProvider).songsDao,
 );

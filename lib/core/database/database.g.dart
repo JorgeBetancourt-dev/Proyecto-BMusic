@@ -2285,6 +2285,281 @@ class ProcessedFilesCompanion extends UpdateCompanion<ProcessedFileEntity> {
   }
 }
 
+class $AppSettingsTableTable extends AppSettingsTable
+    with TableInfo<$AppSettingsTableTable, AppSettingsEntity> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $AppSettingsTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _musicFolderPathMeta = const VerificationMeta(
+    'musicFolderPath',
+  );
+  @override
+  late final GeneratedColumn<String> musicFolderPath = GeneratedColumn<String>(
+    'music_folder_path',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _currentQueueIndexMeta = const VerificationMeta(
+    'currentQueueIndex',
+  );
+  @override
+  late final GeneratedColumn<int> currentQueueIndex = GeneratedColumn<int>(
+    'current_queue_index',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    musicFolderPath,
+    currentQueueIndex,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'app_settings_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<AppSettingsEntity> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('music_folder_path')) {
+      context.handle(
+        _musicFolderPathMeta,
+        musicFolderPath.isAcceptableOrUnknown(
+          data['music_folder_path']!,
+          _musicFolderPathMeta,
+        ),
+      );
+    }
+    if (data.containsKey('current_queue_index')) {
+      context.handle(
+        _currentQueueIndexMeta,
+        currentQueueIndex.isAcceptableOrUnknown(
+          data['current_queue_index']!,
+          _currentQueueIndexMeta,
+        ),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  AppSettingsEntity map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return AppSettingsEntity(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      musicFolderPath: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}music_folder_path'],
+      ),
+      currentQueueIndex: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}current_queue_index'],
+      ),
+    );
+  }
+
+  @override
+  $AppSettingsTableTable createAlias(String alias) {
+    return $AppSettingsTableTable(attachedDatabase, alias);
+  }
+}
+
+class AppSettingsEntity extends DataClass
+    implements Insertable<AppSettingsEntity> {
+  final int id;
+  final String? musicFolderPath;
+
+  /// Posición (0-based) dentro de la cola persistida que estaba sonando
+  /// al cerrar la app. Null si no había nada reproduciéndose.
+  final int? currentQueueIndex;
+  const AppSettingsEntity({
+    required this.id,
+    this.musicFolderPath,
+    this.currentQueueIndex,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || musicFolderPath != null) {
+      map['music_folder_path'] = Variable<String>(musicFolderPath);
+    }
+    if (!nullToAbsent || currentQueueIndex != null) {
+      map['current_queue_index'] = Variable<int>(currentQueueIndex);
+    }
+    return map;
+  }
+
+  AppSettingsTableCompanion toCompanion(bool nullToAbsent) {
+    return AppSettingsTableCompanion(
+      id: Value(id),
+      musicFolderPath: musicFolderPath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(musicFolderPath),
+      currentQueueIndex: currentQueueIndex == null && nullToAbsent
+          ? const Value.absent()
+          : Value(currentQueueIndex),
+    );
+  }
+
+  factory AppSettingsEntity.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return AppSettingsEntity(
+      id: serializer.fromJson<int>(json['id']),
+      musicFolderPath: serializer.fromJson<String?>(json['musicFolderPath']),
+      currentQueueIndex: serializer.fromJson<int?>(json['currentQueueIndex']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'musicFolderPath': serializer.toJson<String?>(musicFolderPath),
+      'currentQueueIndex': serializer.toJson<int?>(currentQueueIndex),
+    };
+  }
+
+  AppSettingsEntity copyWith({
+    int? id,
+    Value<String?> musicFolderPath = const Value.absent(),
+    Value<int?> currentQueueIndex = const Value.absent(),
+  }) => AppSettingsEntity(
+    id: id ?? this.id,
+    musicFolderPath: musicFolderPath.present
+        ? musicFolderPath.value
+        : this.musicFolderPath,
+    currentQueueIndex: currentQueueIndex.present
+        ? currentQueueIndex.value
+        : this.currentQueueIndex,
+  );
+  AppSettingsEntity copyWithCompanion(AppSettingsTableCompanion data) {
+    return AppSettingsEntity(
+      id: data.id.present ? data.id.value : this.id,
+      musicFolderPath: data.musicFolderPath.present
+          ? data.musicFolderPath.value
+          : this.musicFolderPath,
+      currentQueueIndex: data.currentQueueIndex.present
+          ? data.currentQueueIndex.value
+          : this.currentQueueIndex,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AppSettingsEntity(')
+          ..write('id: $id, ')
+          ..write('musicFolderPath: $musicFolderPath, ')
+          ..write('currentQueueIndex: $currentQueueIndex')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, musicFolderPath, currentQueueIndex);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is AppSettingsEntity &&
+          other.id == this.id &&
+          other.musicFolderPath == this.musicFolderPath &&
+          other.currentQueueIndex == this.currentQueueIndex);
+}
+
+class AppSettingsTableCompanion extends UpdateCompanion<AppSettingsEntity> {
+  final Value<int> id;
+  final Value<String?> musicFolderPath;
+  final Value<int?> currentQueueIndex;
+  const AppSettingsTableCompanion({
+    this.id = const Value.absent(),
+    this.musicFolderPath = const Value.absent(),
+    this.currentQueueIndex = const Value.absent(),
+  });
+  AppSettingsTableCompanion.insert({
+    this.id = const Value.absent(),
+    this.musicFolderPath = const Value.absent(),
+    this.currentQueueIndex = const Value.absent(),
+  });
+  static Insertable<AppSettingsEntity> custom({
+    Expression<int>? id,
+    Expression<String>? musicFolderPath,
+    Expression<int>? currentQueueIndex,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (musicFolderPath != null) 'music_folder_path': musicFolderPath,
+      if (currentQueueIndex != null) 'current_queue_index': currentQueueIndex,
+    });
+  }
+
+  AppSettingsTableCompanion copyWith({
+    Value<int>? id,
+    Value<String?>? musicFolderPath,
+    Value<int?>? currentQueueIndex,
+  }) {
+    return AppSettingsTableCompanion(
+      id: id ?? this.id,
+      musicFolderPath: musicFolderPath ?? this.musicFolderPath,
+      currentQueueIndex: currentQueueIndex ?? this.currentQueueIndex,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (musicFolderPath.present) {
+      map['music_folder_path'] = Variable<String>(musicFolderPath.value);
+    }
+    if (currentQueueIndex.present) {
+      map['current_queue_index'] = Variable<int>(currentQueueIndex.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('AppSettingsTableCompanion(')
+          ..write('id: $id, ')
+          ..write('musicFolderPath: $musicFolderPath, ')
+          ..write('currentQueueIndex: $currentQueueIndex')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2294,10 +2569,14 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $PlayHistoryTable playHistory = $PlayHistoryTable(this);
   late final $QueueTable queue = $QueueTable(this);
   late final $ProcessedFilesTable processedFiles = $ProcessedFilesTable(this);
+  late final $AppSettingsTableTable appSettingsTable = $AppSettingsTableTable(
+    this,
+  );
   late final SongsDao songsDao = SongsDao(this as AppDatabase);
   late final PlaylistsDao playlistsDao = PlaylistsDao(this as AppDatabase);
   late final HistoryDao historyDao = HistoryDao(this as AppDatabase);
   late final QueueDao queueDao = QueueDao(this as AppDatabase);
+  late final SettingsDao settingsDao = SettingsDao(this as AppDatabase);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2309,6 +2588,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     playHistory,
     queue,
     processedFiles,
+    appSettingsTable,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -4428,6 +4708,176 @@ typedef $$ProcessedFilesTableProcessedTableManager =
       ProcessedFileEntity,
       PrefetchHooks Function()
     >;
+typedef $$AppSettingsTableTableCreateCompanionBuilder =
+    AppSettingsTableCompanion Function({
+      Value<int> id,
+      Value<String?> musicFolderPath,
+      Value<int?> currentQueueIndex,
+    });
+typedef $$AppSettingsTableTableUpdateCompanionBuilder =
+    AppSettingsTableCompanion Function({
+      Value<int> id,
+      Value<String?> musicFolderPath,
+      Value<int?> currentQueueIndex,
+    });
+
+class $$AppSettingsTableTableFilterComposer
+    extends Composer<_$AppDatabase, $AppSettingsTableTable> {
+  $$AppSettingsTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get musicFolderPath => $composableBuilder(
+    column: $table.musicFolderPath,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get currentQueueIndex => $composableBuilder(
+    column: $table.currentQueueIndex,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$AppSettingsTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $AppSettingsTableTable> {
+  $$AppSettingsTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get musicFolderPath => $composableBuilder(
+    column: $table.musicFolderPath,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get currentQueueIndex => $composableBuilder(
+    column: $table.currentQueueIndex,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$AppSettingsTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $AppSettingsTableTable> {
+  $$AppSettingsTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get musicFolderPath => $composableBuilder(
+    column: $table.musicFolderPath,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get currentQueueIndex => $composableBuilder(
+    column: $table.currentQueueIndex,
+    builder: (column) => column,
+  );
+}
+
+class $$AppSettingsTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $AppSettingsTableTable,
+          AppSettingsEntity,
+          $$AppSettingsTableTableFilterComposer,
+          $$AppSettingsTableTableOrderingComposer,
+          $$AppSettingsTableTableAnnotationComposer,
+          $$AppSettingsTableTableCreateCompanionBuilder,
+          $$AppSettingsTableTableUpdateCompanionBuilder,
+          (
+            AppSettingsEntity,
+            BaseReferences<
+              _$AppDatabase,
+              $AppSettingsTableTable,
+              AppSettingsEntity
+            >,
+          ),
+          AppSettingsEntity,
+          PrefetchHooks Function()
+        > {
+  $$AppSettingsTableTableTableManager(
+    _$AppDatabase db,
+    $AppSettingsTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$AppSettingsTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$AppSettingsTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$AppSettingsTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String?> musicFolderPath = const Value.absent(),
+                Value<int?> currentQueueIndex = const Value.absent(),
+              }) => AppSettingsTableCompanion(
+                id: id,
+                musicFolderPath: musicFolderPath,
+                currentQueueIndex: currentQueueIndex,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String?> musicFolderPath = const Value.absent(),
+                Value<int?> currentQueueIndex = const Value.absent(),
+              }) => AppSettingsTableCompanion.insert(
+                id: id,
+                musicFolderPath: musicFolderPath,
+                currentQueueIndex: currentQueueIndex,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$AppSettingsTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $AppSettingsTableTable,
+      AppSettingsEntity,
+      $$AppSettingsTableTableFilterComposer,
+      $$AppSettingsTableTableOrderingComposer,
+      $$AppSettingsTableTableAnnotationComposer,
+      $$AppSettingsTableTableCreateCompanionBuilder,
+      $$AppSettingsTableTableUpdateCompanionBuilder,
+      (
+        AppSettingsEntity,
+        BaseReferences<
+          _$AppDatabase,
+          $AppSettingsTableTable,
+          AppSettingsEntity
+        >,
+      ),
+      AppSettingsEntity,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -4444,4 +4894,6 @@ class $AppDatabaseManager {
       $$QueueTableTableManager(_db, _db.queue);
   $$ProcessedFilesTableTableManager get processedFiles =>
       $$ProcessedFilesTableTableManager(_db, _db.processedFiles);
+  $$AppSettingsTableTableTableManager get appSettingsTable =>
+      $$AppSettingsTableTableTableManager(_db, _db.appSettingsTable);
 }
