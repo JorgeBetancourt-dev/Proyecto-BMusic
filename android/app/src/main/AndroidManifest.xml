@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:label="proyecto_musica"
+        android:label="BMusic"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
