@@ -1,3 +1,13 @@
-# proyecto_musica
+![Logo](assets/icon/logo_bmusic.png)
 
-A new Flutter project.
+# BMusic
+
+## Screenshots
+
+![App Screenshot](assets/img/Img1.png)
+
+## Installation
+
+```bash
+  Descargar el apk que esta en el apartado de Releases de github
+```
