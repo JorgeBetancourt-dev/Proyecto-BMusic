@@ -13,8 +13,8 @@
 ## 📱 Capturas de pantalla
 
 <p align="center">
-  <img src="assets/img/Img1.png" alt="Captura de la app" width="300"/>
-  <img src="assets/img/Img2.png" alt="Captura de la app" width="300"/>
+  <img src="assets/img/Img1.jpeg" alt="Captura de la app" width="300"/>
+  <img src="assets/img/Img2.jpeg" alt="Captura de la app" width="300"/>
 </p>
 
 ## ✨ Características
