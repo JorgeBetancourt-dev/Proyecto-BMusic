@@ -14,6 +14,7 @@
 
 <p align="center">
   <img src="assets/img/Img1.png" alt="Captura de la app" width="300"/>
+  <img src="assets/img/Img2.png" alt="Captura de la app" width="300"/>
 </p>
 
 ## ✨ Características
@@ -28,11 +29,7 @@
 
 Funcionalidades planeadas para próximas versiones:
 
-- Persistencia de la carpeta de música seleccionada
-- Modos de aleatorio y repetición
-- Controles desde la pantalla de bloqueo
-- Metadatos remotos (portadas, info de artistas) vía MusicBrainz
-- Pantallas de "Música" y "Playlists"
+- Ecualizador de sonido
 
 ## 📥 Instalación
 
